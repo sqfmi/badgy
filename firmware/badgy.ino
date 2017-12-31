@@ -20,20 +20,20 @@ void setup()
   Serial.println("Booting Sketch...");
 
   display.init();
-  pinMode(1,INPUT_PULLUP); //down
-  pinMode(3,INPUT_PULLUP); //up
-  pinMode(5,INPUT_PULLUP); //center
+  pinMode(1,INPUT_PULLUP);  //down
+  pinMode(3,INPUT_PULLUP);  //up
+  pinMode(5,INPUT_PULLUP);  //center
   pinMode(12,INPUT_PULLUP); //right
-  pinMode(16,INPUT); //left GPIO16 pull_down_16, INPUT = floating
+  pinMode(16,INPUT);        //left GPIO16 has an external pull-up resistor
 }
 
 void loop()
 {
-  byte reading =  (digitalRead(1)  == 0 ? 0 : (1<<0)) | //down
-                  (digitalRead(3)  == 0 ? 0 : (1<<1)) | //up
-                  (digitalRead(5)  == 0 ? 0 : (1<<2)) | //center
-                  (digitalRead(12) == 0 ? 0 : (1<<3)) | //right
-                  (digitalRead(16) == 0 ? 0 : (1<<4));  //left
+  byte reading =  (digitalRead(1)  == 0 ? 0 : (1<<0)) |
+                  (digitalRead(3)  == 0 ? 0 : (1<<1)) |
+                  (digitalRead(5)  == 0 ? 0 : (1<<2)) |
+                  (digitalRead(12) == 0 ? 0 : (1<<3)) |
+                  (digitalRead(16) == 0 ? 0 : (1<<4));
                   
   if(reading != lastButtonState){
     lastDebounceTime = millis();
@@ -51,7 +51,7 @@ void loop()
               //do something on up
               break;
             case 2:
-              showBadge();
+              showBadge(); //do something on center
               break;
             case 3:
               //do something on right
@@ -74,7 +74,7 @@ void showBadge()
   display.setRotation(3);
   display.fillScreen(GxEPD_WHITE);
   display.drawBitmap(hello, 0, 0, 296, 128, GxEPD_WHITE);
-  const char* name = "badgy";
+  const char* name = "badgy"; //name on badge
   const GFXfont* f = &FreeSansBoldOblique24pt7b;
   display.setTextColor(GxEPD_BLACK);
   display.setFont(f);

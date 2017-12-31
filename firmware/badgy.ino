@@ -20,12 +20,11 @@ void setup()
   Serial.println("Booting Sketch...");
 
   display.init();
-  //pinMode(16,INPUT_PULLDOWN_16); //GPIO0-15 pullup, GPIO16 pull_down_16, just input = floating
   pinMode(1,INPUT_PULLUP); //down
   pinMode(3,INPUT_PULLUP); //up
   pinMode(5,INPUT_PULLUP); //center
   pinMode(12,INPUT_PULLUP); //right
-  pinMode(16,INPUT); //left
+  pinMode(16,INPUT); //left GPIO16 pull_down_16, INPUT = floating
 }
 
 void loop()

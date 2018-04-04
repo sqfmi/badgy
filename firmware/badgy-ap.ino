@@ -10,7 +10,7 @@
 GxIO_Class io(SPI, SS, D3, D4);
 GxEPD_Class display(io); // default selection of D4, D2
 
-//esp
+//ESP WiFi
 #include <ESP8266WiFi.h>
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
@@ -100,7 +100,7 @@ void showName()
   //image dimensions must be multiples of 8!!!
   //convert at http://javl.github.io/image2cpp/
   display.drawBitmap(hello, 0, 0, 296, 128, GxEPD_WHITE);
-  const char* name = "Jerry";
+  const char* name = "Badgy"; //update your name here
   const GFXfont* f = &FreeSansBoldOblique24pt7b;
   display.setTextColor(GxEPD_BLACK);
   display.setFont(f);

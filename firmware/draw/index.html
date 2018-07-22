@@ -1,0 +1,149 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Badgy Draw</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="icon" type="image/png" href="badgy.png" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <style>
+            html, body{
+                height:100%;
+                text-align:center;
+            }
+            #canvas{
+                box-sizing: border-box;
+                border:1px solid #000;
+                display:block;
+                margin:10px auto;
+            }
+            #clear{
+                float:left;
+                margin:0 0 0 10%;
+            }
+            #send{
+                float:right;
+                margin:0 10% 0 0;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <button id="send" class="btn btn-primary">send</button>
+        <button id="clear" class="btn btn-warning">clear</button>
+    </body>
+    <script>
+        (function(){
+            //DOM elements
+            let canvas      = document.getElementById('canvas');
+            let sendBtn     = document.getElementById('send');
+            let clearBtn    = document.getElementById('clear');
+
+            //canvas
+            let ctx             = canvas.getContext('2d');
+            let canvasWidth     = window.innerWidth * 0.8; //set canvas to 80% of screen
+            let scaleFactor     = canvasWidth / 296; //scale to ePaper display's width
+            let canvasHeight    = Math.round(canvasWidth / 2.3125); //296 x 128 aspect ratio
+            canvas.style.width  = canvasWidth + 'px';
+            canvas.style.height = canvasHeight + 'px';
+            ctx.canvas.width    = 296;
+            ctx.canvas.height   = 128;
+            let scaleFactorX    = canvas.offsetWidth / 296;
+            let scaleFactorY    = canvas.offsetHeight / 128;
+            let lineWidth       = 2;
+
+            //websockets
+            let socket          = new WebSocket('ws://192.168.0.101:81');
+            socket.binaryType   = 'arraybuffer';
+            socket.onopen       = () => { console.log('connected!'); }
+
+            //events
+            canvas.ontouchstart = start;
+            canvas.onmousedown  = start;
+            canvas.ontouchend   = stop;
+            canvas.onmouseup    = stop;
+            canvas.ontouchmove  = move;
+            canvas.onmousemove  = move;
+            sendBtn.onclick     = send;
+            clearBtn.onclick    = clearCanvas;
+
+            function start(e){
+                e.preventDefault();
+                let x,y;
+                if(e.type == 'touchstart'){
+                    touch = e.touches[0];
+                    x = touch.pageX - canvas.offsetLeft;
+                    y = touch.pageY - canvas.offsetTop;
+                }else{
+                    x = e.layerX;
+                    y = e.layerY;
+                }
+                ctx.beginPath();
+                ctx.moveTo(x/scaleFactorX, y/scaleFactorY);
+                ctx.lineWidth = lineWidth;
+                ctx.isDrawing = true;
+            }
+
+            function stop(e){
+                e.preventDefault();
+                ctx.isDrawing = false;
+            }
+
+            function move(e){
+                e.preventDefault();
+                let x,y;
+                if(e.type == 'touchmove'){
+                    touch = e.touches[0];
+                    x = touch.pageX - canvas.offsetLeft;
+                    y = touch.pageY - canvas.offsetTop;
+                }else{
+                    x = e.layerX;
+                    y = e.layerY;
+                }
+                if(ctx.isDrawing){
+                    ctx.lineTo(x/scaleFactorX, y/scaleFactorY);
+                    ctx.stroke();
+                }
+            }
+
+            function canvasToByteArray(){
+                let byteArray = [];
+                let imageData = ctx.getImageData(0,0,canvas.width, canvas.height).data;
+                let byteIndex = 7;
+			    let byte = 0;
+
+                for(let i = 3; i < imageData.length; i += 4){ //RGBA format, since our image is B&W, we only care about A (4th position)
+                    if(imageData[i] > 0){ //either black or white, no grayscale
+                        byte += Math.pow(2,byteIndex); //bit shift on black pixel
+                    }
+                    byteIndex--;
+                    if(i == imageData.length - 4){
+                        for(let i=byteIndex; i > -1; i--){ //wrap up loose ends
+						    byte += Math.pow(2, i);
+					    }
+					    byteIndex = -1;                        
+                    }
+                    if(byteIndex < 0){ //once we have a full byte, push to array
+                        byteArray.push(byte);
+                        byte = 0;
+                        byteIndex = 7;
+                    }
+                }
+                return byteArray;
+            }
+
+            function send(){
+                let byteArray = new Uint8Array(canvasToByteArray());
+                socket.send(byteArray.buffer);
+            }
+
+            function clearCanvas(){
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                send();
+            }
+            
+        })();
+    </script>
+</html>

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Badgy Draw</title>
+        <title>Badgy WebSocket Draw</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="icon" type="image/png" href="badgy.png" />
@@ -55,7 +55,7 @@
             let lineWidth       = 2;
 
             //websockets
-            let socket          = new WebSocket('ws://192.168.0.101:81');
+            let socket          = new WebSocket('ws://192.168.0.113:81'); //REPLACE IP ADDRESS WITH THE ONE DISPLAYED ON BADGY
             socket.binaryType   = 'arraybuffer';
             socket.onopen       = () => { console.log('connected!'); }
 

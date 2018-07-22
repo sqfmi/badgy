@@ -2,6 +2,8 @@
 
 <p align="center">
 	<img src="../../website/img/hello_my_name_is_sticker.png" width="300" height="200" />
+</p>
+<p align="center">
 	<img src="../../website/img/hello_my_name_is_badgy.jpg" width="552" height="254" />
 </p>
 

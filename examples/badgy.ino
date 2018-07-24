@@ -3,8 +3,6 @@
 #include <GxIO/GxIO_SPI/GxIO_SPI.cpp>
 #include <GxIO/GxIO.cpp>
 #include <Fonts/FreeMonoBold9pt7b.h> //include any other fonts you want to use https://github.com/adafruit/Adafruit-GFX-Library
-#include <Fonts/FreeSansBoldOblique24pt7b.h>
-#include "hello.h"
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
@@ -32,7 +30,6 @@ unsigned long debounceDelay = 50;    //the debounce time
 void setup()
 {  
   display.init();
-  showWelcome(); //show welcome message immediately on boot
   
   pinMode(1,INPUT_PULLUP); //down
   pinMode(3,INPUT_PULLUP); //left
@@ -48,7 +45,7 @@ void setup()
   httpUpdater.setup(&httpServer);
   httpServer.begin();
 
-  /* Show IP Address on display*/
+  /* Show IP Address once conncted */
   showIP();
 }
 
@@ -128,18 +125,4 @@ void showIP(){
   display.println(urlCharArray);
   display.println("to upload a new sketch.");
   display.update();  
-}
-
-void showWelcome()
-{
-  display.setRotation(3); //even = portrait, odd = landscape
-  display.fillScreen(GxEPD_WHITE);
-  display.drawBitmap(hello, 0, 0, 296, 128, GxEPD_WHITE);
-  const char* name = "badgy";
-  const GFXfont* f = &FreeSansBoldOblique24pt7b;
-  display.setTextColor(GxEPD_BLACK);
-  display.setFont(f);
-  display.setCursor(75,100);
-  display.println(name);
-  display.update();
 }

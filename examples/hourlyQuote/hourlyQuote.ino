@@ -31,7 +31,6 @@ byte lastButtonState = 0;   //the previous reading from the input pin
 unsigned long lastDebounceTime = 0;  //the last time the output pin was toggled
 unsigned long debounceDelay = 50;    //the debounce time
 String quoteAPIURL = "http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1";
-DynamicJsonBuffer jsonBuffer; //buffer for quote JSON
 bool OTA = false; //OTA mode disabled by default
 
 void setup()
@@ -118,6 +117,7 @@ void showQuote()
   int httpCode = http.GET();
   if(httpCode > 0){
     String payload = http.getString();
+    DynamicJsonBuffer jsonBuffer; //buffer for quote JSON
     JsonArray& root = jsonBuffer.parseArray(payload);
     String quote = root[0]["content"];
     http.end();

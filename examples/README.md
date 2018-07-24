@@ -1,8 +1,9 @@
 ## Setup
 * Add ESP8266 Arduino Core using the Boards Manager https://github.com/esp8266/Arduino#installing-with-boards-manager
-* Install the following libraries
+* Install the following libraries for the various examples
 - Adafruit GFX library https://github.com/adafruit/Adafruit-GFX-Library
 - GxEPD library https://github.com/ZinggJM/GxEPD
+- ArduinoJSON library https://github.com/bblanchon/ArduinoJson
 - WiFi Manager library https://github.com/tzapu/WiFiManager
 
 ## Updating The Firmware

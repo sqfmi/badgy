@@ -6,11 +6,16 @@
     - ArduinoJSON library https://github.com/bblanchon/ArduinoJson
     - WiFi Manager library https://github.com/tzapu/WiFiManager
 
-## Updating The Firmware
-1. Go to *Sktech* -> *Export compiled Binary* to create your firmware binary `*.bin`
-3. Go to http://*BADGY_IP_ADDRESS*:8888/update to upload your new `*.bin` file
-4. Badgy will now restart with the new firmware
+## Uploading Your Own Firmware
+1. In the Arduino IDE, go to *Sktech* -> *Export compiled Binary* to create your firmware binary `*.bin`
+2. Go to http://*BADGY_IP_ADDRESS*:8888/update to upload your new `*.bin` file
+3. Badgy will now restart with your new firmware
 ### Note: If your new firmware does not include the WiFi and OTA code, you will no longer be able to update over WiFi!
+
+## Restoring To Default Firmware
+1. Download the default firmware [badgy.bin](https://github.com/sqfmi/badgy/raw/master/examples/badgy.bin);
+2. Go to http://*BADGY_IP_ADDRESS*:8888/update and upload `badgy.bin`
+3. Badgy will now restart with the default firmware
 
 ## Troubleshoot
 * If for some reason your code is crashing and OTA updates isn't working, you can manually flash the firmware using the programming pads on the PCB. Using a USB-Serial adapter (e.g. FTDI), connect the pins to the pads like so:

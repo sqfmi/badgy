@@ -13,7 +13,7 @@
 ### Note: If your new firmware does not include the WiFi and OTA code, you will no longer be able to update over WiFi!
 
 ## Restoring To Default Firmware
-1. Download the default firmware [badgy.bin](https://github.com/sqfmi/badgy/raw/master/examples/badgy.bin);
+1. Download the default firmware [badgy.bin](https://github.com/sqfmi/badgy/raw/master/examples/badgy.bin)
 2. Go to http://*BADGY_IP_ADDRESS*:8888/update and upload `badgy.bin`
 3. Badgy will now restart with the default firmware
 

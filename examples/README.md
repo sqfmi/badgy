@@ -17,18 +17,20 @@
 2. Go to http://*BADGY_IP_ADDRESS*:8888/update and upload `badgy.bin`
 3. Badgy will now restart with the default firmware
 
-## Troubleshoot
-* If for some reason your code is crashing and OTA updates isn't working, you can manually flash the firmware using the programming pads on the PCB. Using a USB-Serial adapter (e.g. FTDI), connect the pins to the pads like so:
+## Manual Flashing / Recovery
+* If for some reason your code is crashing and OTA updates isn't working, or if you simply prefer uploading over serial, you can manually flash the firmware using the programming pads on the PCB. Using a USB-Serial adapter (e.g. FTDI), connect the pins to the pads like so:
 ```
+WARNING: ALWAYS DISCONNECT OTHER POWER SOURCES (E.G. USB/BATTERY) BEFORE CONNECTING SERIAL ADAPTER TO THE PROGRAMMING PADS.
+WARNING: AVOID CONDUCTIVE CONTACT (E.G. METALS/LIQUIDS) ON THE EXPOSED PADS TO PREVENT DAMAGE
 +------------+-----------+
-| USB-Serial | Badgy Pad |
+| USB-Serial | Badgy     |
 +------------+-----------+
-| RX         | TX        |
-| TX         | RX        |
-| GND        | 0         |
-| GND        | GND       |
-| 3V3        | 3V3       |
-| Not Needed | RST       |
+| RX        =>    TX     |
+| TX        =>    RX     |
+| GND       =>    0      |
+| GND       =>    GND    |
+| 3V3       =>    3V3    |
+| NC        =>    RST    |
 +------------+-----------+
 ```
 The blue LED on Badgy should start blinking during upload. You can use the Arduino IDE or [esptool](https://github.com/espressif/esptool) to flash your firmware.

@@ -1,4 +1,4 @@
-/* e-paper display lib */
+  /* e-paper display lib */
 #include <GxEPD.h>
 #include <GxGDEH029A1/GxGDEH029A1.cpp>
 #include <GxIO/GxIO_SPI/GxIO_SPI.cpp>
@@ -17,7 +17,7 @@
 #include <WiFiManager.h>
 
 /* change this to your name, you may have to adjust font size and cursor location in showHello() to perfectly center the text */
-const char* name = "badgy";
+const char* name = "Badgy";
 
 /* Always include the update server, or else you won't be able to do OTA updates! */
 /**/const int port = 8888;
@@ -38,30 +38,32 @@ unsigned long debounceDelay = 50;    //the debounce time
 void setup()
 {  
   display.init();
-  showHello(); //show "Hello my name is" immediately on boot
   
   pinMode(1,INPUT_PULLUP); //down
   pinMode(3,INPUT_PULLUP); //left
   pinMode(5,INPUT_PULLUP); //center
   pinMode(12,INPUT_PULLUP); //right
   pinMode(10,INPUT_PULLUP); //up
-
-  /* WiFi Manager automatically connects using the saved credentials, if that fails it will go into AP mode */
-  WiFiManager wifiManager;
-  wifiManager.autoConnect("Badgy AP");
-
-  /* Once connected to WiFi, startup the OTA update server*/
-  httpUpdater.setup(&httpServer);
-  httpServer.begin();
-
-  /* Uncomment to show IP Address once connected */
-  // showIP();
+  
+  /* Enter OTA mode if the center button is pressed */
+  if(digitalRead(5)  == 0){
+    /* WiFi Manager automatically connects using the saved credentials, if that fails it will go into AP mode */
+    WiFiManager wifiManager;
+    wifiManager.setAPCallback(configModeCallback);
+    wifiManager.autoConnect("Badgy AP");
+    /* Once connected to WiFi, startup the OTA update server if the center button is held on boot */
+    httpUpdater.setup(&httpServer);
+    httpServer.begin();
+    showIP();
+    while(1){
+      httpServer.handleClient();
+    }
+  }
+  showHello(); //show "Hello my name is" immediately on boot
 }
 
 void loop()
-{
-  httpServer.handleClient();
-  
+{  
   byte reading =  (digitalRead(1)  == 0 ? 0 : (1<<0)) | //down
                   (digitalRead(3)  == 0 ? 0 : (1<<1)) | //left
                   (digitalRead(5)  == 0 ? 0 : (1<<2)) | //center
@@ -79,18 +81,23 @@ void loop()
           switch(i){
             case 0:
               //do something when the user presses down
+              showText("You pressed the down button!");
               break;
             case 1:
               //do something when the user presses left
+              showText("You pressed the left button!");
               break;
             case 2:
               //do something when the user presses center
+              showText("You pressed the center button!");
               break;
             case 3:
               //do something when the user presses right
+              showText("You pressed the right button!");
               break;
             case 4:
               //do something when the user presses up
+              showText("You pressed the up button!");
               break;                              
             default:
               break;
@@ -100,6 +107,18 @@ void loop()
     }
   }
   lastButtonState = reading;
+}
+
+void configModeCallback (WiFiManager *myWiFiManager){
+  display.setRotation(3); //even = portrait, odd = landscape
+  display.fillScreen(GxEPD_WHITE);
+  const GFXfont* f = &FreeMonoBold9pt7b ;
+  display.setTextColor(GxEPD_BLACK);
+  display.setFont(f);
+  display.setCursor(0,50);
+  display.println("Connect to Badgy AP");
+  display.println("to setup your WiFi!");
+  display.update();  
 }
 
 void showText(char *text)
@@ -122,7 +141,6 @@ void showIP(){
   display.setFont(f);
   display.setCursor(0,10);
 
-  String ip = WiFi.localIP().toString();
   String url = WiFi.localIP().toString() + ":"+String(port)+"/update";
   byte charArraySize = url.length() + 1;
   char urlCharArray[charArraySize];
@@ -144,7 +162,7 @@ void showHello()
   const GFXfont* f = &FreeSansBoldOblique24pt7b;
   display.setTextColor(GxEPD_BLACK);
   display.setFont(f);
-  display.setCursor(75,100);
+  display.setCursor(70,100);
   display.println(name);
   display.update();
 }

@@ -12,5 +12,6 @@ This code sample demonstrates displaying a "Hello my name is" badge on Badgy. Th
 Power saving features are not enabled in this code sample and Badgy stays fully on. To conserve power, simply turn off Badgy as the e-paper display does not require power to maintain the displayed image.
 
 ## Instructions
-- Download code sample and required libraries, and compile/upload in the Arduino IDE (1.8.5)
+- Download code sample & required libraries, and compile/upload in the Arduino IDE (1.8.5)
+or
 - Download the pre-compiled binary [hello.bin](https://github.com/sqfmi/badgy/raw/master/examples/hello/hello.bin) and upload using OTA

@@ -41,7 +41,9 @@ void setup()
   WiFiManager wifiManager;
   wifiManager.autoConnect("Badgy AP");
 
-  /* Once connected to WiFi, startup the OTA update server*/
+  /* Once connected to WiFi, startup the OTA update server */
+  /* In other sketches, we enter OTA mode only when center button is pressed i.e. digitalRead(5)  == 0 */
+  /* But in this default sketch, it is always in OTA mode on boot */
   httpUpdater.setup(&httpServer);
   httpServer.begin();
 

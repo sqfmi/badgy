@@ -1,10 +1,12 @@
 ## Setup
+- Install Arduino IDE 1.8.5 https://www.arduino.cc/en/Main/Software
 - Add ESP8266 Arduino Core using the Boards Manager https://github.com/esp8266/Arduino#installing-with-boards-manager
 - Install the following libraries for the various examples
     - Adafruit GFX library https://github.com/adafruit/Adafruit-GFX-Library
     - GxEPD library https://github.com/ZinggJM/GxEPD
     - ArduinoJSON library https://github.com/bblanchon/ArduinoJson
     - WiFi Manager library https://github.com/tzapu/WiFiManager
+- When compiling the sketch in the Arduino IDE, choose **Tools** > **Board** > **NodeMCU 1.0 (ESP-12E Module)**    
 
 ## Uploading Your Own Firmware
 1. In the Arduino IDE, go to *Sktech* -> *Export compiled Binary* to create your firmware binary `*.bin`

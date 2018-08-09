@@ -18,3 +18,4 @@
 "SW1","Slide Switch",1,"POWER"
 "SW2","5-Way Tactile Switch",1,"5-Way Tactile Switch"
 "BT1","2450",1,"Battery_Cell"
+"EPD","2.9inch 296x128",1,"https://www.waveshare.com/2.9inch-e-paper.htm"

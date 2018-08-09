@@ -9,9 +9,9 @@
 
 By default your Badgy displays the welcome message when powered on. To upload new firmware, you'll need to first connect it to your WiFi network.
 
-1. Power your Badgy through USB or a battery. Make sure the power switch is in the off position (up)
+1. Power your Badgy through USB or a rechargeable battery, or both. Make sure the power switch is in the off position (up)
 
-**WARNING: The battery charging IC does not have reverse polarity protection! Make sure you are using a high quality Micro-USB cable to avoid potentially burning the IC.**
+**WARNING: The battery charging IC does not have reverse polarity protection! Check the polarity before inserting the battery, and make sure you are using a high quality Micro-USB cable to avoid potentially burning the IC.**
 
 2. Hold down the center button and slide the power switch on (down). **Note: On older firmware versions it is not necessary to hold down the center button and OTA is on by default**
 3. The screen should now update letting you know to connect to the "Badgy AP" network. You can now let go of the center button

@@ -2,12 +2,10 @@
 
 This code sample demonstrates a simple weather station that displays the current & forecasted weather using the [openweathermap](https://openweathermap.org) APIs.
 
-## Operation
-1. Connect to WiFi on boot
-2. If the **center** button is pressed, go into OTA mode (hold button till screen updates)
-3. Otherwise, perform an `HTTP GET` request to the OpenWeatherMap API
-4. Parse the returned JSON and display the weather
-5. Enter deep sleep for approxmiately one hour
+## Required Libraries
+- GxEPD
+- ArduinJSON 5.13.2
+- Time 1.5.0
 
 ## Instructions
 - Download code sample and required libraries, and compile/upload in the Arduino IDE (1.8.5)

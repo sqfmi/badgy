@@ -3,8 +3,8 @@
 This code sample demonstrates a simple weather station that displays the current & forecasted weather using the [openweathermap](https://openweathermap.org) APIs.
 
 ## Required Libraries
-- GxEPD
-- ArduinJSON 5.13.2
+- GxEPD 2.x
+- ArduinJSON 5.x
 - Time 1.5.0
 
 ## Instructions

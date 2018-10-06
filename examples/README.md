@@ -15,6 +15,14 @@
 4. Badgy will now restart with your new firmware
 ### Note: If your new firmware does not include the WiFi and OTA code, you will no longer be able to update over WiFi!
 
+## Uploading Your Own Image
+Badgy has a 296x128 black & white e-paper display, you can upload your own bitmap image.
+1. Go to http://javl.github.io/image2cpp/ and upload your own image file
+2. Resize the image so that it is within the dimensions of the display (works best if dimensions are multiples of 8 e.g. 72x64)
+3. Select **Arduino code** under **Code output format** and click the **Generate code** button
+4. Copy and paste the output into your code; you can create a new header file (e.g. myimage.h) or simply replace the ```hello.h``` file in the Hello example. Remember to include the file in your main sketch.
+5. The method ```display.drawBitmap(image, 0, 0, 296, 128, GxEPD_WHITE);``` draws the bitmap on the screen. The parameters are in the following order: image byte array, x, y, width, height, and background color. Call ```display.update()``` after to draw the new image.
+
 ## Restoring To Default Firmware
 1. Download the default firmware [badgy.bin](https://github.com/sqfmi/badgy/raw/master/examples/badgy.bin)
 2. Slide the power switch off (up), hold the center button and slide the power switch on (down) at the same time. Your Badgy should now be in OTA mode.

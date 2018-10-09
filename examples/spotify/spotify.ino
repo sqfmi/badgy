@@ -61,7 +61,7 @@ void setup(){
   }
 
   display.init();
-  
+
   pinMode(1,INPUT_PULLUP); //down
   pinMode(3,INPUT_PULLUP); //left
   pinMode(5,INPUT_PULLUP); //center
@@ -93,7 +93,7 @@ void loop(){
                   (digitalRead(5)  == 0 ? 0 : (1<<2)) | //center
                   (digitalRead(12) == 0 ? 0 : (1<<3)) | //right
                   (digitalRead(10) == 0 ? 0 : (1<<4));  //up
-                  
+
   if(reading != lastButtonState){
     lastDebounceTime = millis();
   }
@@ -127,7 +127,7 @@ void loop(){
             case 4:
               //do something when the user presses up
               showText("You pressed the up button!");
-              break;                              
+              break;
             default:
               break;
           }
@@ -141,7 +141,7 @@ void loop(){
     getPlayback();
     lastUpdate = millis();
   }
-  
+
 }
 
 void configModeCallback (WiFiManager *myWiFiManager){
@@ -153,7 +153,7 @@ void configModeCallback (WiFiManager *myWiFiManager){
   display.setCursor(0,50);
   display.println("Connect to Badgy AP");
   display.println("to setup your WiFi!");
-  display.update();  
+  display.update();
 }
 
 void showIP(){
@@ -170,11 +170,11 @@ void showIP(){
   url.toCharArray(urlCharArray, charArraySize);
 
   display.println("You are now connected!");
-  display.println("");  
+  display.println("");
   display.println("Go to:");
   display.println(urlCharArray);
   display.println("to upload a new sketch.");
-  display.update();  
+  display.update();
 }
 
 void showText(char *text)
@@ -190,7 +190,7 @@ void showText(char *text)
 }
 
 String getToken(){
-  
+
   /* Check if refresh token exists*/
   String refreshToken = "";
   showText("Loading config");
@@ -213,7 +213,7 @@ String getToken(){
   /********************************************************************************/
   if(!MDNS.begin(MDNSName.c_str())){
     //Serial.println("Error setting up MDNS responder!");
-    while(1){ 
+    while(1){
       delay(1000);
     }
   }
@@ -225,9 +225,9 @@ String getToken(){
 
   /* Server route handlers */
   server.on("/", [&server](){
-    server.sendHeader("Location", String("https://accounts.spotify.com/authorize/?client_id=" 
+    server.sendHeader("Location", String("https://accounts.spotify.com/authorize/?client_id="
       + clientId
-      + "&response_type=code&redirect_uri=" 
+      + "&response_type=code&redirect_uri="
       + "http://" + MDNSName + ".local/callback/"
       + "&scope=user-read-playback-state%20user-modify-playback-state"), true);
     server.send(302, "text/plain", "");
@@ -254,14 +254,14 @@ String getToken(){
   }//refreshToken == ""
   /**************************************************************************************************************/
   /* 3. Use authorization code from previous step to obtain an API token                                        */
-  /**************************************************************************************************************/  
-  
+  /**************************************************************************************************************/
+
   /* Initiate HTTPS connection to Spotify's authentication endpoint  */
   WiFiClientSecure client;
   if(!client.connect(authHost.c_str(), httpsPort)){
     showText("Connection Failed!");
   }
-  
+
   /* There are 2 grant types, authorization_code for a new token, and refresh_token if you're refreshing */
   String grantType    = (refreshToken == "") ? "authorization_code" : "refresh_token";
   String codeType    = (refreshToken == "") ? "code" : "refresh_token";
@@ -272,11 +272,11 @@ String getToken(){
                         "&client_id="       + clientId        +
                         "&client_secret="   + clientSecret    +
                         "&redirect_uri="    + "http%3A%2F%2F" + MDNSName + ".local%2Fcallback%2F";
-  /* HTTPS request string */                      
+  /* HTTPS request string */
   String httpsString   = "POST "             + tokenAPI        + " "
                         "HTTP/1.1\r\n"      + "Host: "        + authHost.c_str()  + "\r\n"  +
-                        "Content-Length: "  + String(requestBody.length())        + "\r\n"  + 
-                        "Content-Type: application/x-www-form-urlencoded\r\n"     + 
+                        "Content-Length: "  + String(requestBody.length())        + "\r\n"  +
+                        "Content-Type: application/x-www-form-urlencoded\r\n"     +
                         "Connection: close\r\n\r\n" + requestBody;
   /* Send request */
   //Serial.println(httpsString);
@@ -339,7 +339,7 @@ void controlPlayer(int control){
   }else{
     return;
   }
-  
+
   if(token == ""){
     token = getToken();
   }
@@ -348,11 +348,11 @@ void controlPlayer(int control){
   if(!client.connect(apiHost.c_str(), httpsPort)){
     showText("Connection Failed!");
   }
-    
+
   String request = "" + method + currentPlayerAPI + command + " HTTP/1.1\r\n" +
                    "Host: " + apiHost + "\r\n" +
                    "Authorization: Bearer " + token + "\r\n" +
-                   "Content-Length: 0\r\n" + 
+                   "Content-Length: 0\r\n" +
                    "Connection: close\r\n\r\n";
   client.print(request);
 
@@ -369,7 +369,7 @@ void controlPlayer(int control){
     showText(status);
     return;
   }
-  
+
   char endOfHeaders[] = "\r\n\r\n";
   if (!client.find(endOfHeaders)) {
     showText("Invalid Response...");
@@ -390,13 +390,13 @@ void getPlayback(){
   if(token == ""){
     token = getToken();
   }
-  
+
   /* Construct request string and send */
   WiFiClientSecure client;
   if(!client.connect(apiHost.c_str(), httpsPort)){
     showText("Connection Failed!");
   }
-    
+
   String request = "GET " + currentPlayerAPI + " HTTP/1.1\r\n" +
                    "Host: " + apiHost + "\r\n" +
                    "Authorization: Bearer " + token + "\r\n" +
@@ -416,7 +416,7 @@ void getPlayback(){
     showText("Unexpected Response...");
     return;
   }
-  
+
   char endOfHeaders[] = "\r\n\r\n";
   if (!client.find(endOfHeaders)) {
     showText("Invalid Response...");
@@ -436,7 +436,7 @@ void getPlayback(){
   String currentAlbum = root["item"]["album"]["name"];
   String currentArtist = root["item"]["artists"][0]["name"];
   isPlaying = root["is_playing"] == "true";
-  
+
 
   /* Print current track details on display */
   long currentProgress = root["progress_ms"];
@@ -444,7 +444,7 @@ void getPlayback(){
   int minutes = (currentProgress/1000) / 60;
   int seconds = (currentProgress/1000) % 60;
   int location = ((currentProgress * (296 - 20)) / currentDuration) + 10;
-  
+
  // Serial.println(currentTrack);
  // Serial.println(currentAlbum);
  // Serial.println(currentArtist);
@@ -471,9 +471,9 @@ void getPlayback(){
   display.fillCircle(location, 72, 5, GxEPD_BLACK);
   //display.update();
   if(isPlaying){
-    display.drawBitmap(play, 133, 84, 30, 30, GxEPD_WHITE);
+    display.drawBitmap(play, 133, 84, 32, 32, GxEPD_WHITE);
   }else{
-    display.drawBitmap(pause, 133, 84, 30, 30, GxEPD_WHITE);
+    display.drawBitmap(pause, 133, 84, 32, 32, GxEPD_WHITE);
   }
   display.drawBitmap(prev, 73, 84, 32, 32, GxEPD_WHITE);
   display.drawBitmap(next, 193, 84, 32, 32, GxEPD_WHITE);

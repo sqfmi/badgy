@@ -17,7 +17,7 @@ By default your Badgy displays the welcome message when powered on. To upload ne
 3. The screen should now update letting you know to connect to the "Badgy AP" network. You can now let go of the center button
 4. Using your mobile phone, connect to the "Badgy AP" WiFi network
 5. Follow the captive portal instructions to select your desired WiFi connection
-6. Once connected, Badgy is ready to recieve new firmware! Go to http://*YOUR_IP_ADDRESS*:8888/update to upload your new firmware
+6. Once connected, Badgy is ready to receive new firmware! Go to http://*YOUR_IP_ADDRESS*:8888/update to upload your new firmware
 7. WiFi credentials are automatically saved onboard, your Badgy will automatically connect to your selected network the next time you perform an update
 
 Check out the examples folders for various Arduino code samples, we're constantly adding more!

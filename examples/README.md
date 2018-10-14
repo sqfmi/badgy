@@ -3,13 +3,15 @@
 - Add ESP8266 Arduino Core using the Boards Manager https://github.com/esp8266/Arduino#installing-with-boards-manager
 - Install the following libraries for the various examples
     - Adafruit GFX library https://github.com/adafruit/Adafruit-GFX-Library
-    - GxEPD v2.x library https://github.com/ZinggJM/GxEPD
+    - GxEPD v3.x library https://github.com/ZinggJM/GxEPD
     - ArduinoJSON v5.x library https://github.com/bblanchon/ArduinoJson
     - WiFi Manager library https://github.com/tzapu/WiFiManager
+    - Time v1.5 https://github.com/michaelmargolis/arduino_time
+    - WebSockets https://github.com/Links2004/arduinoWebSockets
 - When compiling the sketch in the Arduino IDE, choose **Tools** > **Board** > **NodeMCU 1.0 (ESP-12E Module)**    
 
 ## Uploading Your Own Firmware
-1. In the Arduino IDE, go to *Sktech* -> *Export compiled Binary* to create your firmware binary `*.bin`
+1. In the Arduino IDE, go to *Sketch* -> *Export compiled Binary* to create your firmware binary `*.bin`
 2. Slide the power switch off (up), hold the center button and slide the power switch on (down) at the same time. Your Badgy should now be in OTA mode.
 3. Go to http://*BADGY_IP_ADDRESS*:8888/update to upload your new `*.bin` file
 4. Badgy will now restart with your new firmware

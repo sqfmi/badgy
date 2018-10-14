@@ -4,9 +4,16 @@
 - Install the following libraries for the various examples
     - Adafruit GFX library https://github.com/adafruit/Adafruit-GFX-Library
     - GxEPD v2.x library https://github.com/ZinggJM/GxEPD
+        - In order to use v2.X you can clone the repository at this [commit](https://github.com/ZinggJM/GxEPD/commit/20eff1d80f7276a3c093183c3823cdd5f6cf1c9d):
+        ```sh
+        git clone git@github.com:ZinggJM/GxEPD.git
+        git checkout 20eff1d80f7276a3c093183c3823cdd5f6cf1c9d
+        ```
     - ArduinoJSON v5.x library https://github.com/bblanchon/ArduinoJson
     - WiFi Manager library https://github.com/tzapu/WiFiManager
-- When compiling the sketch in the Arduino IDE, choose **Tools** > **Board** > **NodeMCU 1.0 (ESP-12E Module)**    
+- When compiling the sketch in the Arduino IDE, choose **Tools** > **Board** > **NodeMCU 1.0 (ESP-12E Module)**
+
+
 
 ## Uploading Your Own Firmware
 1. In the Arduino IDE, go to *Sktech* -> *Export compiled Binary* to create your firmware binary `*.bin`

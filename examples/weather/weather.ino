@@ -1,8 +1,8 @@
 /* e-paper display lib */
 #include <GxEPD.h>
-#include <GxGDEH029A1/GxGDEH029A1.cpp>
-#include <GxIO/GxIO_SPI/GxIO_SPI.cpp>
-#include <GxIO/GxIO.cpp>
+#include <GxGDEH029A1/GxGDEH029A1.h>
+#include <GxIO/GxIO_SPI/GxIO_SPI.h>
+#include <GxIO/GxIO.h>
 /* include any other fonts you want to use https://github.com/adafruit/Adafruit-GFX-Library */
 #include <Fonts/FreeMonoBold9pt7b.h>
 #include <Fonts/FreeMonoBold18pt7b.h>

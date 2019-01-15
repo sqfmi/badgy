@@ -1,0 +1,154 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Badgy Camera Draw</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="icon" type="image/png" href="badgy.png" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <style>
+            html, body{
+                height:100%;
+                text-align:center;
+            }
+            video{
+                visibility:hidden;
+                position:absolute;
+            }
+            button,label{
+                display:block;
+            }
+            #canvas{
+                margin-top:20px;
+            }
+            #clear{
+                float:left;
+                margin:0 0 0 10%;
+            }
+            #connect,#send{
+                margin:0 auto;
+            }
+        </style>
+    </head>
+    <body>
+        <video id="video" width="296" height="128" autoplay></video>
+        <canvas id="canvas" width="296" height="128"></canvas>
+        <label>IP ADDRESS:
+            <input id="ip" type="text" />
+        </label>
+        <button id="connect">Connect</button>
+        <button id="send">Send Photo</button>
+    </body>
+    <script>
+        // Put event listeners into place
+        window.addEventListener("DOMContentLoaded", function() {
+            // Grab elements, create settings, etc.
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            var video = document.getElementById('video');
+            var mediaConfig =  { video: {width: {exact: 290}, height: {exact: 128}} };
+            var errBack = function(e) {
+                console.log('An error has occurred!', e)
+            };
+
+            // Put video listeners into place
+            if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia(mediaConfig).then(function(stream) {
+                    //video.src = window.URL.createObjectURL(stream);
+                    video.srcObject = stream;
+                    video.play();
+                });
+            }
+
+            var sendBtn = document.getElementById('send');
+            var connectBtn = document.getElementById('connect');
+            var socket;
+            sendBtn.onclick = send;
+            connectBtn.onclick = connectSocket;
+
+            function canvasToByteArray(){
+                let byteArray = [];
+                let imageData = context.getImageData(0,0,canvas.width, canvas.height).data;
+                let byteIndex = 7;
+                let byte = 0;
+
+                for(let i = 0; i < imageData.length; i += 4){ //RGBA format, since our image is B&W, we can read just R (1st position)
+                    if(imageData[i] == 0){ //either black or white
+                        byte += Math.pow(2,byteIndex); //bit shift on black pixel
+                    }
+                    byteIndex--;
+                    if(i == imageData.length - 4){
+                        for(let i=byteIndex; i > -1; i--){ //wrap up loose ends
+                            byte += Math.pow(2, i);
+                        }
+                        byteIndex = -1;                        
+                    }
+                    if(byteIndex < 0){ //once we have a full byte, push to array
+                        byteArray.push(byte);
+                        byte = 0;
+                        byteIndex = 7;
+                    }
+                }
+                return byteArray;
+            }
+
+            function connectSocket(){
+                var ip_address = document.getElementById('ip').value;
+                socket = new WebSocket('ws://'+ip_address+':81');
+                socket.binaryType   = 'arraybuffer';
+                socket.onopen       = () => { console.log('connected!'); }                
+            }
+
+            function send(){
+                let byteArray = new Uint8Array(canvasToByteArray());
+                socket.send(byteArray.buffer);
+            }            
+
+            function dither(image) {
+                //grayscale
+                for (var i = 0; i <= image.data.length; i += 4) {
+                    image.data[i] = image.data[i + 1] = image.data[i + 2] = parseInt(image.data[i] * 0.21 + image.data[i + 1] * 0.71 + image.data[i + 2] * 0.07, 10);
+
+                }
+                //atkinson dither
+                skipPixels = 4;
+                imageWidth = image.width;
+                imageLength = image.data.length;
+
+                for (currentPixel = 0; currentPixel <= imageLength; currentPixel += skipPixels) {
+
+                    if(image.data[currentPixel] <= 128){
+                        newPixelColour = 0;
+                    }else{
+                        newPixelColour = 255;
+                    }
+
+                    err = parseInt((image.data[currentPixel] - newPixelColour) / 8, 10);
+                    image.data[currentPixel] = newPixelColour;
+
+                    image.data[currentPixel + 4]                        += err;
+                    image.data[currentPixel + 8]                        += err;
+                    image.data[currentPixel + (4 * imageWidth) - 4]     += err;
+                    image.data[currentPixel + (4 * imageWidth)]         += err;
+                    image.data[currentPixel + (4 * imageWidth) + 4]     += err;
+                    image.data[currentPixel + (8 * imageWidth)]         += err;
+
+                    image.data[currentPixel + 1] = image.data[currentPixel + 2] = image.data[currentPixel];
+
+                }
+            }       
+        
+            //update canvas with dither'd image every 100ms
+            setInterval(function(){
+                context.drawImage(video, 0, 0, 296, 128);
+                var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                dither(imageData);
+                context.putImageData(imageData, 0, 0);
+            },100);
+        
+        }, false);
+        
+    </script>
+</html>

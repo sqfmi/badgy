@@ -11,13 +11,18 @@
 - When compiling the sketch in the Arduino IDE, choose **Tools** > **Board** > **NodeMCU 1.0 (ESP-12E Module)**    
 
 ## Uploading Your Own Firmware
+
+### Over USB (For Rev 2A/2B)
+1. Once the right board and port is selected, simply click upload and your sketch will be uploaded automatically. Make sure the power switch is on (down), and you should see the the blue LED on the ESP-12F module flsahing.
+
+### Over Wifi (For Rev 1/2A/2B)
 1. In the Arduino IDE, go to *Sketch* -> *Export compiled Binary* to create your firmware binary `*.bin`
 2. Slide the power switch off (up), hold the center button and slide the power switch on (down) at the same time. Your Badgy should now be in OTA mode.
 3. Go to http://*BADGY_IP_ADDRESS*:8888/update to upload your new `*.bin` file
 4. Badgy will now restart with your new firmware
 ### Note: If your new firmware does not include the WiFi and OTA code, you will no longer be able to update over WiFi!
 
-## Uploading Your Own Image
+## Converting Your Own Image
 Badgy has a 296x128 black & white e-paper display, you can upload your own bitmap image.
 1. Go to http://javl.github.io/image2cpp/ and upload your own image file
 2. Resize the image so that it is within the dimensions of the display (works best if dimensions are multiples of 8 e.g. 72x64)
@@ -30,8 +35,9 @@ Badgy has a 296x128 black & white e-paper display, you can upload your own bitma
 2. Slide the power switch off (up), hold the center button and slide the power switch on (down) at the same time. Your Badgy should now be in OTA mode.
 3. Go to http://*BADGY_IP_ADDRESS*:8888/update and upload `badgy.bin`
 4. Badgy will now restart with the default firmware
+5. You can also do this over USB following the instructions from above
 
-## Manual Flashing / Recovery
+## Manual Flashing / Recovery (For Rev 1)
 * If for some reason your code is crashing and OTA updates isn't working, or if you prefer uploading over serial, you can manually flash the firmware using the programming pads on the PCB. Using a USB-Serial adapter (e.g. FTDI), connect the pins to the pads like so:
 ```
 WARNING: ALWAYS DISCONNECT OTHER POWER SOURCES (E.G. USB/BATTERY) BEFORE CONNECTING SERIAL ADAPTER TO THE PROGRAMMING PADS.

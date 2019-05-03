@@ -14,7 +14,7 @@ This is the latest revision of Badgy (May 2019) and can be uniquley identified b
 
 ### Rev 2A
 
-This revision of Badgy adds USB programming capacbility with the CH340 USB-UART controller. It also has two additional jumper pads: 1) ADC broken out if you choose to measure the battery voltage 2) jumper pad for driving other E-ink displays (e.g. 2.13" flexible E-ink). This version has a hardware bug that causes Badgy to not work on battery power, full description with hacks/fixes described here https://github.com/sqfmi/badgy/issues/20.
+This revision of Badgy adds USB programming capability with the CH340 USB-UART controller. It also has two additional jumper pads: 1) ADC broken out if you choose to measure the battery voltage 2) jumper pad for driving other E-ink displays (e.g. 2.13" flexible E-ink). This version has a hardware bug that causes Badgy to not work on battery power, full description with hacks/fixes described here https://github.com/sqfmi/badgy/issues/20.
 
 ### Rev 1
 

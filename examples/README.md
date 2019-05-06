@@ -37,6 +37,9 @@ Badgy has a 296x128 black & white e-paper display, you can upload your own bitma
 4. Badgy will now restart with the default firmware
 5. You can also do this over USB following the instructions from above
 
+## Using MicroPython with Badgy
+Check out our [badgy-python repo](https://github.com/sqfmi/badgy-python)
+
 ## Manual Flashing / Recovery (For Rev 1)
 * If for some reason your code is crashing and OTA updates isn't working, or if you prefer uploading over serial, you can manually flash the firmware using the programming pads on the PCB. Using a USB-Serial adapter (e.g. FTDI), connect the pins to the pads like so:
 ```

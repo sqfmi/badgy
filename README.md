@@ -41,4 +41,4 @@ By default your Badgy displays the welcome message when powered on. To upload ne
 
 **WARNING: The battery charging IC does not have reverse polarity protection! Check the polarity before inserting the battery, and make sure you are using a rechargeable LiPo battery (LIR2450 coin cell or 1S LiPo). Other batteries such as the CR2032 will not work**
 
-Check out the examples folders for various Arduino code samples, we're constantly adding more!
+Check out the examples folders for various code samples, we're constantly adding more!

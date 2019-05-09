@@ -27,8 +27,10 @@ By default your Badgy displays the welcome message when powered on. To upload ne
 ## Over USB (for Rev 2A & Rev 2B)
 1. Download and install the latest version of Arduino IDE
 2. Install board support for the ESP8266 using the Arduino Board Manager using instructions found [here](https://github.com/esp8266/Arduino#installing-with-boards-manager)).
-3. The USB-Serial device should show up on the list of ports (e.g. COM8, /dev/cu.\* , /dev/tty.\*)
-4. Compile and upload one of our code samples, or create your own!
+3. If on windows then you need to add support for the CP201X by installing drivers from [here](https://www.silabs.com/community/interface/knowledge-base.entry.html/2016/12/30/downloading_cp210xd-ek07)).
+4. The USB-Serial device should show up on the list of ports (e.g. COM8, /dev/cu.\* , /dev/tty.\*).  If you don't see it then it is possible that you need to install the drivers for CP2014 on your system.
+5. From the board selection mention choose "NodeMCU 1.0 (ESP-12E Module)".
+6. Compile and upload one of our code samples, or create your own!  See the 'compiling' section below for some details.
 
 ## Over WiFi
 1. Power your Badgy through USB or a rechargeable battery, or both. Make sure the power switch is in the off position (up)
@@ -42,3 +44,12 @@ By default your Badgy displays the welcome message when powered on. To upload ne
 **WARNING: The battery charging IC does not have reverse polarity protection! Check the polarity before inserting the battery, and make sure you are using a rechargeable LiPo battery (LIR2450 coin cell or 1S LiPo). Other batteries such as the CR2032 will not work**
 
 Check out the examples folders for various code samples, we're constantly adding more!
+
+## Compiling examples
+The readme files within the example directories contain specific library and version information for that example.   At a minimum though you should consider installing the following libraries as they are very useful and/or necessary for any real functionality.
+
+1. GxEPD library: you can find the repo [here] (https://github.com/ZinggJM/GxEPD)).
+2. AdaFruit GFX library: installation instructions available [here](https://learn.adafruit.com/adafruit-gfx-graphics-library/overview)).
+3. WifiManager library: you can find the repo [here] (https://github.com/tzapu/WiFiManager)).  You can also find this in the Library Manager under 'WiFiManager by tzapu'.
+4. Time library: you can find the repo [here] (https://github.com/PaulStoffregen/Time)).  
+5. ArduinoJson library: you can find the repo [here] (https://github.com/bblanchon/ArduinoJson)). You can also find this in the Library Manager under 'ArduinoJson by Benoit Blanchon'.   Make sure that you install a 5.x version since some of the examples require that.

@@ -21,9 +21,9 @@
 
 const char* host = "api.openweathermap.org";
 const char* API_KEY = "YOUR_API_KEY"; //Your API key https://home.openweathermap.org/
-const char* UNITS = "metric"; //Metric or Imperial
 const char* CITY_ID = "5128581"; //City ID https://openweathermap.org/find
-const int time_zone = -5; // e.g. UTC−05:00 = -5
+const int time_zone = -5; // e.g. UTC-05:00 = -5
+const boolean IS_METRIC_UNITS = true;
 
 /* Always include the update server, or else you won't be able to do OTA updates! */
 /**/const int port = 8888;
@@ -56,7 +56,7 @@ void setup()
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.autoConnect("Badgy AP");
 
-  if(digitalRead(5)  == 0){
+  if(digitalRead(5) == 0) {
     /* Once connected to WiFi, startup the OTA update server if the center button is held on boot */
     httpUpdater.setup(&httpServer);
     httpServer.begin();
@@ -72,49 +72,9 @@ void setup()
 
 void loop()
 {  
-    byte reading =  (digitalRead(1)  == 0 ? 0 : (1<<0)) | //down
-                    (digitalRead(3)  == 0 ? 0 : (1<<1)) | //left
-                    (digitalRead(5)  == 0 ? 0 : (1<<2)) | //center
-                    (digitalRead(12) == 0 ? 0 : (1<<3)) | //right
-                    (digitalRead(10) == 0 ? 0 : (1<<4));  //up
-                    
-    if(reading != lastButtonState){
-      lastDebounceTime = millis();
-    }
-    if((millis() - lastDebounceTime) > debounceDelay){
-      if(reading != buttonState){
-        buttonState = reading;
-        for(int i=0; i<5; i++){
-          if(bitRead(buttonState, i) == 0){
-            switch(i){
-              case 0:
-                //do something when the user presses down
-                showText("You pressed the down button!");
-                break;
-              case 1:
-                //do something when the user presses left
-                showText("You pressed the left button!");
-                break;
-              case 2:
-                //do something when the user presses center
-                showText("You pressed the center button!");
-                break;
-              case 3:
-                //do something when the user presses right
-                showText("You pressed the right button!");
-                break;
-              case 4:
-                //do something when the user presses up
-                showText("You pressed the up button!");
-                break;                              
-              default:
-                break;
-            }
-          }
-        }
-      }
-    }
-    lastButtonState = reading;
+  // loop is never executed in this program as the setup does all the work
+  // then puts the ESP into a deep sleep which will cause a reset at the
+  // conclusion which runs setup again.
 }
 
 void configModeCallback (WiFiManager *myWiFiManager){
@@ -165,7 +125,7 @@ void showIP(){
 void getWeatherData()
 {
   String type= "weather";
-  String url = "/data/2.5/"+type+"?id="+CITY_ID+"&units="+UNITS+"&appid="+API_KEY;
+  String url = "/data/2.5/"+type+"?id="+CITY_ID+"&units="+getUnitsString()+"&appid="+API_KEY;
 
   // Use WiFiClient class to create TCP connections
   WiFiClient client;
@@ -256,7 +216,11 @@ void getWeatherData()
   //Current Wind
   display.drawBitmap(strong_wind_small, 0, 62, 48, 48, GxEPD_WHITE);
   display.setCursor(50,92);
-  display.print(String((int)(wind*3.6))+"km/h");
+  if (IS_METRIC_UNITS) { 
+    display.print(String((int)(wind*3.6))+"km/h");
+  } else {
+    display.print(String((int)wind)+" mph");
+  }
   //Current Humidity
   display.drawBitmap(humidity_small, 0, 97, 32, 32, GxEPD_WHITE);
   display.setCursor(50,119);
@@ -265,14 +229,26 @@ void getWeatherData()
   display.setCursor(72,55);
   const GFXfont* big = &FreeMonoBold18pt7b;
   display.setFont(big);    
-  display.println(String((int)current_temp) + "C");
+  if (IS_METRIC_UNITS) { 
+    display.println(String((int)current_temp) + "C");
+  } else {
+    display.println(String((int)current_temp) + "F");
+  }
   display.update();
+}
+
+String getUnitsString() {
+  if (IS_METRIC_UNITS) { 
+    return "metric";
+  } else {
+    return "imperial";
+  }
 }
 
 void getForecastData()
 {
   String type= "forecast";
-  String url = "/data/2.5/"+type+"?id="+CITY_ID+"&units="+UNITS+"&appid="+API_KEY;
+  String url = "/data/2.5/"+type+"?id="+CITY_ID+"&units="+getUnitsString()+"&appid="+API_KEY;
 
   // Use WiFiClient class to create TCP connections
   WiFiClient client;

@@ -35,12 +35,6 @@ const boolean IS_METRIC_UNITS = true;
 GxIO_Class io(SPI, SS, 0, 2);
 GxEPD_Class display(io); // default selection of D4, D2
 
-/* A single byte is used to store the button states for debouncing */
-byte buttonState = 0;
-byte lastButtonState = 0;   //the previous reading from the input pin
-unsigned long lastDebounceTime = 0;  //the last time the output pin was toggled
-unsigned long debounceDelay = 50;    //the debounce time
-
 void setup()
 {  
   display.init();
@@ -65,9 +59,13 @@ void setup()
       httpServer.handleClient();
     }
   }
-  getWeatherData(); //current weather
-  getForecastData(); //forecast for the next 3 days
-  ESP.deepSleep(3600e6, WAKE_RF_DEFAULT); //set sleep time 3600e6 = hourly
+  if (getWeatherData() && getForecastData()) { 
+    // Success in getting weather an forecast data.  Sleep for an 3600e6 microseconds -- an hour.
+    ESP.deepSleep(3600e6, WAKE_RF_DEFAULT); 
+  } else {
+    // A failure of some sort.  Wait for 5 seconds and then retry.
+    ESP.deepSleep(5e6, WAKE_RF_DEFAULT); 
+  }
 }
 
 void loop()
@@ -98,6 +96,7 @@ void showText(char *text)
   display.setFont(f);
   display.setCursor(10,70);
   display.println(text);
+  display.println("Auto-retry in 5 seconds.");
   display.update();
 }
 
@@ -122,7 +121,7 @@ void showIP(){
   display.update();  
 }
 
-void getWeatherData()
+bool getWeatherData()
 {
   String type= "weather";
   String url = "/data/2.5/"+type+"?id="+CITY_ID+"&units="+getUnitsString()+"&appid="+API_KEY;
@@ -132,7 +131,7 @@ void getWeatherData()
   const int httpPort = 80;
   if (!client.connect(host, httpPort)) {
     showText("connection failed");
-    return;
+    return false;
   }
   
   // This will send the request to the server
@@ -144,7 +143,7 @@ void getWeatherData()
     if (millis() - timeout > 5000) {
       showText(">>> Client Timeout !");
       client.stop();
-      return;
+      return false;
     }
   }
 
@@ -165,12 +164,14 @@ void getWeatherData()
     //Serial.println(status);
     if(strcmp(status, "HTTP/1.1 200 OK") != 0){
       showText("HTTP Status Error!");
+      return false;
     }
 
     /* Find the end of headers */
     char endOfHeaders[] = "\r\n\r\n";
     if (!client.find(endOfHeaders)) {
       showText("Invalid Response...");
+      return false;
     }
 
     /* Start parsing the JSON in the response body */
@@ -178,6 +179,7 @@ void getWeatherData()
     JsonObject& root = jsonBuffer.parseObject(client);
     if(!root.success()){
       showText("JSON parsing failed!");
+      return false;
     }
     city = root["name"].as<String>();
     current_temp = root["main"]["temp"];
@@ -235,6 +237,7 @@ void getWeatherData()
     display.println(String((int)current_temp) + "F");
   }
   display.update();
+  return true;
 }
 
 String getUnitsString() {
@@ -245,7 +248,7 @@ String getUnitsString() {
   }
 }
 
-void getForecastData()
+bool getForecastData()
 {
   String type= "forecast";
   String url = "/data/2.5/"+type+"?id="+CITY_ID+"&units="+getUnitsString()+"&appid="+API_KEY;
@@ -255,7 +258,7 @@ void getForecastData()
   const int httpPort = 80;
   if (!client.connect(host, httpPort)) {
     showText("connection failed");
-    return;
+    return false;
   }
   
   // This will send the request to the server
@@ -267,7 +270,7 @@ void getForecastData()
     if (millis() - timeout > 5000) {
       showText(">>> Client Timeout !");
       client.stop();
-      return;
+      return false;
     }
   }
 
@@ -278,12 +281,14 @@ void getForecastData()
     //Serial.println(status);
     if(strcmp(status, "HTTP/1.1 200 OK") != 0){
       showText("HTTP Status Error!");
+      return false;
     }
 
     /* Find the end of headers */
     char endOfHeaders[] = "\r\n\r\n";
     if (!client.find(endOfHeaders)) {
       showText("Invalid Response...");
+      return false;
     }
 
     /* Start parsing the JSON in the response body */
@@ -291,6 +296,7 @@ void getForecastData()
     JsonObject& root = jsonBuffer.parseObject(client);
     if(!root.success()){
       showText("JSON parsing failed!");
+      return false;
     }
 
     /* Forecast returns weather data every 3 hours for the next 5 days, we only want the next 3 days for every 24 hours*/
@@ -299,26 +305,27 @@ void getForecastData()
       int temp = root["list"][char(i*8)]["main"]["temp"];
       String icon_code= root["list"][char(i*8)]["weather"][0]["icon"];
     
-    int offset = 100; //x offset for forecast block
+      int offset = 100; //x offset for forecast block
         
-    const unsigned char *icon;
-    icon = getIcon(condition, icon_code, true);
-    display.drawBitmap(icon, (offset+(i*48)), 58, 48, 48, GxEPD_WHITE); //(icon, pos_x, pos_y, size_x, size_y, bg)
-    int time = root["list"][char(i*8)]["dt"];
-    time = time + (time_zone*60*60);
-    setTime(time);
-    //Day of Week
-    const GFXfont* small = &FreeMonoBold9pt7b;
-    display.setTextColor(GxEPD_BLACK);
-    display.setFont(small);
-    display.setCursor((offset+7+(i*48)),58);
-    display.print(dayShortStr(weekday()));
-    //Forecasted temperature
-    display.setCursor((offset+10+(i*48)),115);
-    display.print(String(temp));    
+      const unsigned char *icon;
+      icon = getIcon(condition, icon_code, true);
+      display.drawBitmap(icon, (offset+(i*48)), 58, 48, 48, GxEPD_WHITE); //(icon, pos_x, pos_y, size_x, size_y, bg)
+      int time = root["list"][char(i*8)]["dt"];
+      time = time + (time_zone*60*60);
+      setTime(time);
+      //Day of Week
+      const GFXfont* small = &FreeMonoBold9pt7b;
+      display.setTextColor(GxEPD_BLACK);
+      display.setFont(small);
+      display.setCursor((offset+7+(i*48)),58);
+      display.print(dayShortStr(weekday()));
+      //Forecasted temperature
+      display.setCursor((offset+10+(i*48)),115);
+      display.print(String(temp));    
     }
     display.update();
   }
+  return true;
 }
 
 const unsigned char * getIcon(int condition, String icon_code, bool small){

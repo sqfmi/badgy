@@ -9,6 +9,12 @@
 
 This code sample demonstrates drawing images on Badgy. Drawing done on the canvas is converted to a byte stream and sent to Badgy over WebSocket. 
 
+## Required Libraries
+- See the base required libraries in the root Readme for this repository
+- Websocket server and client library found [here] (https://github.com/Links2004/arduinoWebSockets).
+- ArduinJSON 5.x
+- Time 1.5.0
+
 ## Instructions
 1. Turn on Badgy and wait for it to connect, note the IP address displayed.
 2. Edit `index.html` **line 58** and replace the IP address with Badgy's IP address e.g. `ws://192.168.0.113:81`.

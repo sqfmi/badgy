@@ -21,9 +21,9 @@
 
 const char* host = "api.openweathermap.org";
 const char* API_KEY = "YOUR_API_KEY"; //Your API key https://home.openweathermap.org/
-const char* UNITS = "metric"; //Metric or Imperial
 const char* CITY_ID = "5128581"; //City ID https://openweathermap.org/find
-const int time_zone = -5; // e.g. UTC−05:00 = -5
+const int time_zone = -5; // e.g. UTC-05:00 = -5
+const boolean IS_METRIC_UNITS = true;
 
 /* Always include the update server, or else you won't be able to do OTA updates! */
 /**/const int port = 8888;
@@ -34,12 +34,6 @@ const int time_zone = -5; // e.g. UTC−05:00 = -5
 /* Configure pins for display */
 GxIO_Class io(SPI, SS, 0, 2);
 GxEPD_Class display(io); // default selection of D4, D2
-
-/* A single byte is used to store the button states for debouncing */
-byte buttonState = 0;
-byte lastButtonState = 0;   //the previous reading from the input pin
-unsigned long lastDebounceTime = 0;  //the last time the output pin was toggled
-unsigned long debounceDelay = 50;    //the debounce time
 
 void setup()
 {  
@@ -56,7 +50,7 @@ void setup()
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.autoConnect("Badgy AP");
 
-  if(digitalRead(5)  == 0){
+  if(digitalRead(5) == 0) {
     /* Once connected to WiFi, startup the OTA update server if the center button is held on boot */
     httpUpdater.setup(&httpServer);
     httpServer.begin();
@@ -65,56 +59,20 @@ void setup()
       httpServer.handleClient();
     }
   }
-  getWeatherData(); //current weather
-  getForecastData(); //forecast for the next 3 days
-  ESP.deepSleep(3600e6, WAKE_RF_DEFAULT); //set sleep time 3600e6 = hourly
+  if (getWeatherData() && getForecastData()) { 
+    // Success in getting weather an forecast data.  Sleep for an 3600e6 microseconds -- an hour.
+    ESP.deepSleep(3600e6, WAKE_RF_DEFAULT); 
+  } else {
+    // A failure of some sort.  Wait for 5 seconds and then retry.
+    ESP.deepSleep(5e6, WAKE_RF_DEFAULT); 
+  }
 }
 
 void loop()
 {  
-    byte reading =  (digitalRead(1)  == 0 ? 0 : (1<<0)) | //down
-                    (digitalRead(3)  == 0 ? 0 : (1<<1)) | //left
-                    (digitalRead(5)  == 0 ? 0 : (1<<2)) | //center
-                    (digitalRead(12) == 0 ? 0 : (1<<3)) | //right
-                    (digitalRead(10) == 0 ? 0 : (1<<4));  //up
-                    
-    if(reading != lastButtonState){
-      lastDebounceTime = millis();
-    }
-    if((millis() - lastDebounceTime) > debounceDelay){
-      if(reading != buttonState){
-        buttonState = reading;
-        for(int i=0; i<5; i++){
-          if(bitRead(buttonState, i) == 0){
-            switch(i){
-              case 0:
-                //do something when the user presses down
-                showText("You pressed the down button!");
-                break;
-              case 1:
-                //do something when the user presses left
-                showText("You pressed the left button!");
-                break;
-              case 2:
-                //do something when the user presses center
-                showText("You pressed the center button!");
-                break;
-              case 3:
-                //do something when the user presses right
-                showText("You pressed the right button!");
-                break;
-              case 4:
-                //do something when the user presses up
-                showText("You pressed the up button!");
-                break;                              
-              default:
-                break;
-            }
-          }
-        }
-      }
-    }
-    lastButtonState = reading;
+  // loop is never executed in this program as the setup does all the work
+  // then puts the ESP into a deep sleep which will cause a reset at the
+  // conclusion which runs setup again.
 }
 
 void configModeCallback (WiFiManager *myWiFiManager){
@@ -138,6 +96,7 @@ void showText(char *text)
   display.setFont(f);
   display.setCursor(10,70);
   display.println(text);
+  display.println("Auto-retry in 5 seconds.");
   display.update();
 }
 
@@ -162,17 +121,17 @@ void showIP(){
   display.update();  
 }
 
-void getWeatherData()
+bool getWeatherData()
 {
   String type= "weather";
-  String url = "/data/2.5/"+type+"?id="+CITY_ID+"&units="+UNITS+"&appid="+API_KEY;
+  String url = "/data/2.5/"+type+"?id="+CITY_ID+"&units="+getUnitsString()+"&appid="+API_KEY;
 
   // Use WiFiClient class to create TCP connections
   WiFiClient client;
   const int httpPort = 80;
   if (!client.connect(host, httpPort)) {
     showText("connection failed");
-    return;
+    return false;
   }
   
   // This will send the request to the server
@@ -184,7 +143,7 @@ void getWeatherData()
     if (millis() - timeout > 5000) {
       showText(">>> Client Timeout !");
       client.stop();
-      return;
+      return false;
     }
   }
 
@@ -205,12 +164,14 @@ void getWeatherData()
     //Serial.println(status);
     if(strcmp(status, "HTTP/1.1 200 OK") != 0){
       showText("HTTP Status Error!");
+      return false;
     }
 
     /* Find the end of headers */
     char endOfHeaders[] = "\r\n\r\n";
     if (!client.find(endOfHeaders)) {
       showText("Invalid Response...");
+      return false;
     }
 
     /* Start parsing the JSON in the response body */
@@ -218,6 +179,7 @@ void getWeatherData()
     JsonObject& root = jsonBuffer.parseObject(client);
     if(!root.success()){
       showText("JSON parsing failed!");
+      return false;
     }
     city = root["name"].as<String>();
     current_temp = root["main"]["temp"];
@@ -256,7 +218,11 @@ void getWeatherData()
   //Current Wind
   display.drawBitmap(strong_wind_small, 0, 62, 48, 48, GxEPD_WHITE);
   display.setCursor(50,92);
-  display.print(String((int)(wind*3.6))+"km/h");
+  if (IS_METRIC_UNITS) { 
+    display.print(String((int)(wind*3.6))+"km/h");
+  } else {
+    display.print(String((int)wind)+" mph");
+  }
   //Current Humidity
   display.drawBitmap(humidity_small, 0, 97, 32, 32, GxEPD_WHITE);
   display.setCursor(50,119);
@@ -265,21 +231,34 @@ void getWeatherData()
   display.setCursor(72,55);
   const GFXfont* big = &FreeMonoBold18pt7b;
   display.setFont(big);    
-  display.println(String((int)current_temp) + "C");
+  if (IS_METRIC_UNITS) { 
+    display.println(String((int)current_temp) + "C");
+  } else {
+    display.println(String((int)current_temp) + "F");
+  }
   display.update();
+  return true;
 }
 
-void getForecastData()
+String getUnitsString() {
+  if (IS_METRIC_UNITS) { 
+    return "metric";
+  } else {
+    return "imperial";
+  }
+}
+
+bool getForecastData()
 {
   String type= "forecast";
-  String url = "/data/2.5/"+type+"?id="+CITY_ID+"&units="+UNITS+"&appid="+API_KEY;
+  String url = "/data/2.5/"+type+"?id="+CITY_ID+"&units="+getUnitsString()+"&appid="+API_KEY;
 
   // Use WiFiClient class to create TCP connections
   WiFiClient client;
   const int httpPort = 80;
   if (!client.connect(host, httpPort)) {
     showText("connection failed");
-    return;
+    return false;
   }
   
   // This will send the request to the server
@@ -291,7 +270,7 @@ void getForecastData()
     if (millis() - timeout > 5000) {
       showText(">>> Client Timeout !");
       client.stop();
-      return;
+      return false;
     }
   }
 
@@ -302,12 +281,14 @@ void getForecastData()
     //Serial.println(status);
     if(strcmp(status, "HTTP/1.1 200 OK") != 0){
       showText("HTTP Status Error!");
+      return false;
     }
 
     /* Find the end of headers */
     char endOfHeaders[] = "\r\n\r\n";
     if (!client.find(endOfHeaders)) {
       showText("Invalid Response...");
+      return false;
     }
 
     /* Start parsing the JSON in the response body */
@@ -315,6 +296,7 @@ void getForecastData()
     JsonObject& root = jsonBuffer.parseObject(client);
     if(!root.success()){
       showText("JSON parsing failed!");
+      return false;
     }
 
     /* Forecast returns weather data every 3 hours for the next 5 days, we only want the next 3 days for every 24 hours*/
@@ -323,26 +305,27 @@ void getForecastData()
       int temp = root["list"][char(i*8)]["main"]["temp"];
       String icon_code= root["list"][char(i*8)]["weather"][0]["icon"];
     
-    int offset = 100; //x offset for forecast block
+      int offset = 100; //x offset for forecast block
         
-    const unsigned char *icon;
-    icon = getIcon(condition, icon_code, true);
-    display.drawBitmap(icon, (offset+(i*48)), 58, 48, 48, GxEPD_WHITE); //(icon, pos_x, pos_y, size_x, size_y, bg)
-    int time = root["list"][char(i*8)]["dt"];
-    time = time + (time_zone*60*60);
-    setTime(time);
-    //Day of Week
-    const GFXfont* small = &FreeMonoBold9pt7b;
-    display.setTextColor(GxEPD_BLACK);
-    display.setFont(small);
-    display.setCursor((offset+7+(i*48)),58);
-    display.print(dayShortStr(weekday()));
-    //Forecasted temperature
-    display.setCursor((offset+10+(i*48)),115);
-    display.print(String(temp));    
+      const unsigned char *icon;
+      icon = getIcon(condition, icon_code, true);
+      display.drawBitmap(icon, (offset+(i*48)), 58, 48, 48, GxEPD_WHITE); //(icon, pos_x, pos_y, size_x, size_y, bg)
+      int time = root["list"][char(i*8)]["dt"];
+      time = time + (time_zone*60*60);
+      setTime(time);
+      //Day of Week
+      const GFXfont* small = &FreeMonoBold9pt7b;
+      display.setTextColor(GxEPD_BLACK);
+      display.setFont(small);
+      display.setCursor((offset+7+(i*48)),58);
+      display.print(dayShortStr(weekday()));
+      //Forecasted temperature
+      display.setCursor((offset+10+(i*48)),115);
+      display.print(String(temp));    
     }
     display.update();
   }
+  return true;
 }
 
 const unsigned char * getIcon(int condition, String icon_code, bool small){

@@ -55,3 +55,6 @@ The readme files within the example directories contain specific library and ver
 3. WifiManager library: you can find the repo [here](https://github.com/tzapu/WiFiManager).  You can also find this in the Library Manager under 'WiFiManager by tzapu'.
 4. Time library: you can find the repo [here](https://github.com/PaulStoffregen/Time).  
 5. ArduinoJson library: you can find the repo [here](https://github.com/bblanchon/ArduinoJson). You can also find this in the Library Manager under 'ArduinoJson by Benoit Blanchon'.   Make sure that you install a 5.x version since some of the examples require that.
+
+## Autoreset
+Some users have reported that Badgy doesn't automatically reset after uploading a new sketch via USB; this appears to be an issue with the ESP8266 Arduino library v2.5.0+. You can either toggle the power switch to reset, or downgrade to v2.4.2. This issue does not affect the operation of Badgy

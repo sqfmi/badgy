@@ -28,7 +28,7 @@ By default your Badgy displays the welcome message when powered on. To upload ne
 1. Download and install the latest version of Arduino IDE
 2. Install board support for the ESP8266 using the Arduino Board Manager using instructions found [here](https://github.com/esp8266/Arduino#installing-with-boards-manager).
 3. If you are using a windows machine then you need to add support for the CP201X by installing drivers from [here](https://www.silabs.com/community/interface/knowledge-base.entry.html/2016/12/30/downloading_cp210xd-ek07).
-4. The USB-Serial device should show up on the list of ports (e.g. COM8, /dev/cu.\* , /dev/tty.\*).  If you don't see it then it is possible that you need to install the drivers for CP2014 on your system.
+4. The USB-Serial device should show up on the list of ports (e.g. COM8, /dev/cu.\* , /dev/tty.\*).  If you don't see it then it is possible that you need to install the drivers for CP2104 on your system.
 5. From Tools -> Board choose "NodeMCU 1.0 (ESP-12E Module)".
 6. Compile and upload one of our code samples, or create your own!  See the 'compiling' section below for some details.
 

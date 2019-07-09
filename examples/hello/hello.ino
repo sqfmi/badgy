@@ -1,6 +1,7 @@
   /* e-paper display lib */
 #include <GxEPD.h>
 #include <GxGDEH029A1/GxGDEH029A1.h>
+//#include <GxGDEW029Z10/GxGDEW029Z10.h>    // 2.9" b/w/r
 #include <GxIO/GxIO_SPI/GxIO_SPI.h>
 #include <GxIO/GxIO.h>
 /* include any other fonts you want to use https://github.com/adafruit/Adafruit-GFX-Library */
@@ -161,6 +162,7 @@ void showHello()
   display.drawBitmap(hello, 0, 0, 296, 128, GxEPD_WHITE);
   const GFXfont* f = &FreeSansBoldOblique24pt7b;
   display.setTextColor(GxEPD_BLACK);
+//display.setTextColor(GxEPD_RED);  
   display.setFont(f);
   display.setCursor(70,100);
   display.println(name);

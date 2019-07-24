@@ -22,7 +22,9 @@ This is the original and first revision of Badgy. It only supports firmware uplo
 
 # Getting Started
 
-By default your Badgy displays the welcome message when powered on. To upload new firmware, you can simply connect via USB **(Rev 2A/2B)**, or to your WiFi network **(Rev 1/2A/2B)**.
+By default your Badgy displays the welcome message when powered on. To upload new firmware, you can simply connect via USB **(Rev 2A/2B)**, or to your WiFi network **(Rev 1/2A/2B)**. You will also need a **LIR2450** rechargeable coin cell battery if you wish to run on battery power only.
+
+**WARNING: Make sure you are using a rechargeable battery (LIR2450 coin cell or 1S LiPo). Other batteries such as the CR2450 or CR2032 are undervoltage (3.0V) and will not work. The battery charging IC also does not have reverse polarity protection! Check the polarity before inserting the battery**
 
 ## Over USB (for Rev 2A & Rev 2B)
 1. Download and install the latest version of Arduino IDE
@@ -42,8 +44,6 @@ Note that if the ESP chip is in a deep sleep then it will not automatically resp
 5. Follow the captive portal instructions to select your desired WiFi connection
 6. Once connected, Badgy is ready to receive new firmware! Go to http://*YOUR_IP_ADDRESS*:8888/update to upload your new firmware
 7. WiFi credentials are automatically saved onboard, your Badgy will automatically connect to your selected network the next time you perform an update
-
-**WARNING: The battery charging IC does not have reverse polarity protection! Check the polarity before inserting the battery, and make sure you are using a rechargeable LiPo battery (LIR2450 coin cell or 1S LiPo). Other batteries such as the CR2032 will not work**
 
 Check out the examples folders for various code samples, we're constantly adding more!
 

@@ -1,5 +1,5 @@
 ## Setup
-- Install Arduino IDE 1.8.5 https://www.arduino.cc/en/Main/Software
+- Install Arduino IDE https://www.arduino.cc/en/Main/Software
 - Add ESP8266 Arduino Core using the Boards Manager https://github.com/esp8266/Arduino#installing-with-boards-manager
 - Install the following libraries for the various examples
     - Adafruit GFX library https://github.com/adafruit/Adafruit-GFX-Library
@@ -15,7 +15,7 @@
 ### Over USB (For Rev 2A/2B)
 1. Once the right board and port is selected, simply click upload and your sketch will be uploaded automatically. Make sure the power switch is on (down), and you should see the the blue LED on the ESP-12F module flsahing.
 
-### Over Wifi (For Rev 1/2A/2B)
+### Over Wifi (For Rev 1/2A/2B/2C)
 1. In the Arduino IDE, go to *Sketch* -> *Export compiled Binary* to create your firmware binary `*.bin`
 2. Slide the power switch off (up), hold the center button and slide the power switch on (down) at the same time. Your Badgy should now be in OTA mode.
 3. Go to http://*BADGY_IP_ADDRESS*:8888/update to upload your new `*.bin` file

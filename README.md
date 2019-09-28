@@ -8,9 +8,13 @@ Since launching the first revision of Badgy, we have made various updates and fi
 
 <img src="/website/img/badgy_rev.jpg" />
 
+### Rev 2C
+
+This is the latest revision of Badgy (September 2019) with a new display that supports 2-bit 4 color grayscale (Black/Dark Gray/Light Gray/White). It can be uniquely identified by the closed solder jumper on the back marked with the asterisk \*. It also has a green tab on the screen protector film.
+
 ### Rev 2B
 
-This is the latest revision of Badgy (May 2019) and can be uniquley identified by the small green PCB on the bottom left corner. It supports programming over USB (updated from CH340 to CP2104, woohoo!) and WiFi OTA. It fixes the battery issue with Rev 2A.
+This revision of Badgy (May 2019) can be uniquley identified by the small green PCB on the bottom left corner. It supports programming over USB (updated from CH340 to CP2104, woohoo!) and WiFi OTA. It fixes the battery issue with Rev 2A.
 
 ### Rev 2A
 

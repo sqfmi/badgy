@@ -1,5 +1,5 @@
 #include <GxEPD.h>
-//select the display class to use,  only one
+//Use the GxGDEW029T5 class if you have Badgy Rev 2C. Make sure you are on GxEPD 3.05 or above
 //#include <GxGDEW029T5/GxGDEW029T5.h>
 #include <GxGDEH029A1/GxGDEH029A1.cpp>
 #include <GxIO/GxIO_SPI/GxIO_SPI.cpp>

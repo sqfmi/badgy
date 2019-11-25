@@ -1,8 +1,9 @@
 /* e-paper display lib */
 #include <GxEPD.h>
 //Use the GxGDEW029T5 class if you have Badgy Rev 2C. Make sure you are on GxEPD 3.05 or above
-//#include <GxGDEW029T5/GxGDEW029T5.h>
-#include <GxGDEH029A1/GxGDEH029A1.h>
+#include <GxGDEW029T5/GxGDEW029T5.h>
+//Use the GxGDEH029A1 class if you have anything older
+//#include <GxGDEH029A1/GxGDEH029A1.h>
 #include <GxIO/GxIO_SPI/GxIO_SPI.h>
 #include <GxIO/GxIO.h>
 /* include any other fonts you want to use https://github.com/adafruit/Adafruit-GFX-Library */

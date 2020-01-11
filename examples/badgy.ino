@@ -1,7 +1,7 @@
 #include <GxEPD.h>
 //Use the GxGDEW029T5 class if you have Badgy Rev 2C. Make sure you are on GxEPD 3.05 or above
-//#include <GxGDEW029T5/GxGDEW029T5.h>
-#include <GxGDEH029A1/GxGDEH029A1.cpp>
+#include <GxGDEW029T5/GxGDEW029T5.h>
+//#include <GxGDEH029A1/GxGDEH029A1.cpp>
 #include <GxIO/GxIO_SPI/GxIO_SPI.cpp>
 #include <GxIO/GxIO.cpp>
 #include <Fonts/FreeMonoBold9pt7b.h> //include any other fonts you want to use https://github.com/adafruit/Adafruit-GFX-Library
